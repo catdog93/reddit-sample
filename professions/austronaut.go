@@ -31,11 +31,11 @@ const (
 	SovietShuttle = "Buran"
 )
 
-func (astronaut Astronaut) GetAstronautInfo() string {
+func (astronaut *Astronaut) GetAstronautInfo() string {
 	return astronaut.GetEmployeeInfo() + "\nAstronaut" + astronaut.AstronautSpecialSkillsToString()
 }
 
-func (astronaut Astronaut) AstronautSpecialSkillsToString() (skillsString string) {
+func (astronaut *Astronaut) AstronautSpecialSkillsToString() (skillsString string) {
 	for _, skill := range astronaut.SpecialSkills {
 		skillsString = skillsString + " " + string(skill)
 	}

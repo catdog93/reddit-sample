@@ -18,7 +18,8 @@ type Employee struct {
 	FullTime   bool      `json:"fullTime,omitempty"`
 }
 
-func (employee Employee) GetEmployeeInfo() string {
+func (employee *Employee) GetEmployeeInfo() string {
+	employee.Name = "123"
 	return employee.Person.GetPersonInfo() + "\nHiring date: " + string(employee.HiringDate.Format(customDateFormat)) + ", salary: $ " + strconv.Itoa(employee.Salary) + "\nFull time: " + strconv.FormatBool(employee.FullTime)
 }
 
@@ -35,6 +36,29 @@ type Person struct {
 	Phone       string `json:"phone,omitempty"`
 }
 
-func (person Person) GetPersonInfo() string {
+func (person *Person) GetPersonInfo() string {
 	return person.Name + " " + person.LastName + ", " + strconv.Itoa(person.Age) + " years old"
+}
+
+func (person *Person) GetContacts() string {
+	return person.Phone + ", " + person.Email
+}
+
+func (person *Person) SetAge(age int) bool {
+	if person != nil && age >= 0 {
+		person.Age = age
+		return true
+	}
+	return false
+}
+
+func (person *Person) NewPersonBorned(name, lastName, nationality string) bool {
+	if person == nil {
+		person = new(Person)
+		person.Name = name
+		person.LastName = lastName
+		person.Nationality = nationality
+		return true
+	}
+	return false
 }
