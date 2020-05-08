@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
-	prof "github.com/catdog93/GoIT/professions"
+	"strconv"
+	//prof "github.com/catdog93/GoIT/professions"
 )
 
 /*
-Создание Кеша  Работников (разных проффесий),  ключ - идентификатор ID.
-Range по мапе, с целью опросить всех работников о их имени и должности.
+ Создать мапу типа [ID] interface{}
+Написать Функцию которая будет принимать кеш и возвращать типы значений каждого элемента Кэша.
+Поигратся с го рутинами. Реализовать алгоритм Луна
 */
-
+/*
 type ID int
 
 func homeTask3() {
@@ -60,7 +62,50 @@ func homeTask3() {
 		fmt.Println()
 	}
 }
-
+*/
 func main() {
-	homeTask3()
+	cardNumber := 5375414118690212
+	getReverseInt(cardNumber)
+}
+
+const digitsNumber = 16
+
+func getReverseInt(number int) int {
+	var stringsSlice []string
+	var string string
+	digit := 0
+	for number > 0 {
+		digit = number % 10
+		string = strconv.Itoa(digit)
+		stringsSlice = append(stringsSlice, string)
+		number = number / 10
+	}
+	/*if result, error := strconv.Atoi(strings.Join(stringsSlice,"")); error == nil {
+		return result
+	} else {
+		panic(error)
+	}*/
+	fmt.Println(stringsSlice)
+	//fmt.Println(strconv.Atoi(strings.Join(stringsSlice,"")))
+	return 0
+}
+
+func moonAlgorithmCheckCardNumber(cardNumber int) bool {
+	getReverseInt(cardNumber)
+	return true
+}
+
+func conversion(i interface{}) {
+	switch value := i.(type) {
+	case int:
+		if value, ok := i.(int); ok {
+			fmt.Println(value)
+		}
+	case string:
+		if value, ok := i.(string); ok {
+			fmt.Println(value)
+		}
+	default:
+		fmt.Printf("I don't know about type %T!\n", value)
+	}
 }
