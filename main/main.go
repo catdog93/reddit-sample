@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+	prof "github.com/catdog93/GoIT/professions"
+	"reflect"
 	"strconv"
-	//prof "github.com/catdog93/GoIT/professions"
 )
 
 /*
@@ -11,12 +12,12 @@ import (
 Написать Функцию которая будет принимать кеш и возвращать типы значений каждого элемента Кэша.
 Поигратся с го рутинами. Реализовать алгоритм Луна
 */
-/*
+
 type ID int
 
-func homeTask3() {
-	employees := map[ID]prof.EmployeeService{ // cash's values has interface type
-		0: prof.Astronaut{
+func cashOfEmptyInterfaceType() {
+	employees := map[ID]interface{}{ // cash's values has interface{} type
+		0: &prof.Astronaut{
 			Employee: &prof.Employee{
 				Person: &prof.Person{
 					Name:     "Ivan",
@@ -26,7 +27,7 @@ func homeTask3() {
 				Position: "Captain",
 			},
 		},
-		1: prof.Actor{
+		1: &prof.Actor{
 			Employee: &prof.Employee{
 				Person: &prof.Person{
 					Name:     "Will",
@@ -36,7 +37,7 @@ func homeTask3() {
 				Position: "Superhero",
 			},
 		},
-		2: prof.SoftwareDeveloper{
+		2: &prof.SoftwareDeveloper{
 			Employee: &prof.Employee{
 				Person: &prof.Person{
 					Name:     "Tim",
@@ -55,57 +56,47 @@ func homeTask3() {
 			Position: "None",
 		},
 	}
-
-	fmt.Println()
-	for key := range employees {
-		fmt.Print(employees[key].GetEmployeePosition())
-		fmt.Println()
-	}
+	fmt.Println(mapContainsTypes(employees))
 }
-*/
+
+func mapContainsTypes(cash map[ID]interface{}) (types []interface{}) {
+	for key := range cash {
+		types = append(types, reflect.TypeOf(cash[key]))
+	}
+	return
+}
+
 func main() {
-	cardNumber := 5375414118690212
-	getReverseInt(cardNumber)
-}
+	// reflect.TypeOf() for each element of map[ID]interface{}
+	cashOfEmptyInterfaceType()
 
-const digitsNumber = 16
-
-func getReverseInt(number int) int {
-	var stringsSlice []string
-	var string string
-	digit := 0
-	for number > 0 {
-		digit = number % 10
-		string = strconv.Itoa(digit)
-		stringsSlice = append(stringsSlice, string)
-		number = number / 10
+	// Moon algorithm
+	cardNumbers := []cardNumber{5375414118690212, 378282246310005, 5019717010103742, 76009244561, 4222222222222, 2222990905257051}
+	for _, value := range cardNumbers {
+		fmt.Println(moonAlgorithmCheckCardNumber(value))
 	}
-	/*if result, error := strconv.Atoi(strings.Join(stringsSlice,"")); error == nil {
-		return result
+}
+
+type cardNumber int // alias type
+
+func moonAlgorithmCheckCardNumber(cardNumber cardNumber) bool {
+	if len(strconv.Itoa(int(cardNumber))) > 12 { // cardNumbers has length > 12
+		var intSlice []int
+		digit, sum := 0, 0
+		for index := 0; cardNumber > 0; index++ { // % 10 return digit from the end
+			digit = (int(cardNumber)) % 10
+			intSlice = append(intSlice, digit)
+			cardNumber = cardNumber / 10 // /10 makes integer shorter per 1 digit at the end
+			if index%2 != 0 {            // even digits * 2
+				intSlice[index] *= 2
+				if intSlice[index] > 9 { // subtract 9 from any number > 9
+					intSlice[index] -= 9
+				}
+			}
+			sum += intSlice[index] // sum all gotten digits
+		}
+		return sum%10 == 0
 	} else {
-		panic(error)
-	}*/
-	fmt.Println(stringsSlice)
-	//fmt.Println(strconv.Atoi(strings.Join(stringsSlice,"")))
-	return 0
-}
-
-func moonAlgorithmCheckCardNumber(cardNumber int) bool {
-	getReverseInt(cardNumber)
-	return true
-}
-
-func conversion(i interface{}) {
-	switch value := i.(type) {
-	case int:
-		if value, ok := i.(int); ok {
-			fmt.Println(value)
-		}
-	case string:
-		if value, ok := i.(string); ok {
-			fmt.Println(value)
-		}
-	default:
-		fmt.Printf("I don't know about type %T!\n", value)
+		return false
 	}
 }
