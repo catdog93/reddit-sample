@@ -2,16 +2,42 @@ package main
 
 import (
 	"fmt"
+	dna "github.com/catdog93/GoIT/DNA"
 	prof "github.com/catdog93/GoIT/professions"
 	"reflect"
 	"strconv"
 )
 
 /*
+Comparing two DNA and counting how many of the nucleotides are different from their equivalent in the other string.
+
  Создать мапу типа [ID] interface{}
 Написать Функцию которая будет принимать кеш и возвращать типы значений каждого элемента Кэша.
-Поигратся с го рутинами. Реализовать алгоритм Луна
+Реализовать алгоритм Луна
 */
+
+func main() {
+	// compare Nucleotides of DNAs
+	dna1 := dna.DNA{ID: 1, NucleotidesFormula: "GAGCCTACTAACGGGAT"}
+	dna2 := dna.DNA{ID: 2, NucleotidesFormula: "CATCGTAATGACGGCCT"}
+	if counter, error, consoleView := dna1.CompareNucleotidesFormulas(&dna2); error == nil {
+		fmt.Println(dna1.NucleotidesFormula)
+		fmt.Println(dna2.NucleotidesFormula)
+		fmt.Println(consoleView)
+		fmt.Println("The Hamming distance between these two DNA strands is: ", counter)
+	} else {
+		fmt.Println(error)
+	}
+	/*
+		// reflect.TypeOf() for each element of map[ID]interface{}
+		cashOfEmptyInterfaceType()
+
+		// Moon algorithm
+		cardNumbers := []cardNumber{5375414118690212, 378282246310005, 5019717010103742, 76009244561, 4222222222222, 2222990905257051}
+		for _, value := range cardNumbers {
+			fmt.Println(moonAlgorithmCheckCardNumber(value))
+		}*/
+}
 
 type ID int
 
@@ -64,17 +90,6 @@ func mapContainsTypes(cash map[ID]interface{}) (types []interface{}) {
 		types = append(types, reflect.TypeOf(cash[key]))
 	}
 	return
-}
-
-func main() {
-	// reflect.TypeOf() for each element of map[ID]interface{}
-	cashOfEmptyInterfaceType()
-
-	// Moon algorithm
-	cardNumbers := []cardNumber{5375414118690212, 378282246310005, 5019717010103742, 76009244561, 4222222222222, 2222990905257051}
-	for _, value := range cardNumbers {
-		fmt.Println(moonAlgorithmCheckCardNumber(value))
-	}
 }
 
 type cardNumber int // alias type
