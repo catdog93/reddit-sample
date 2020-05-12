@@ -2,116 +2,113 @@ package main
 
 import (
 	"fmt"
-	dna "github.com/catdog93/GoIT/DNA"
 	prof "github.com/catdog93/GoIT/professions"
-	"reflect"
-	"strconv"
+	"sync"
 )
 
 /*
-Comparing two DNA and counting how many of the nucleotides are different from their equivalent in the other string.
+1. Создать функцию которая приводит работников к человеку(значение типов)
 
- Создать мапу типа [ID] interface{}
-Написать Функцию которая будет принимать кеш и возвращать типы значений каждого элемента Кэша.
-Реализовать алгоритм Луна
+2. Создать кеши начальников и работников не приступать к опросу работников пока не будут перебраны все начальники.
+Перебирать кеши в рутинах, конкурентно. С RWMutex.
 */
 
-func main() {
-	// compare Nucleotides of DNAs
-	dna1 := dna.DNA{ID: 1, NucleotidesFormula: "GAGCCTACTAACGGGAT"}
-	dna2 := dna.DNA{ID: 2, NucleotidesFormula: "CATCGTAATGACGGCCT"}
-	if counter, error, consoleView := dna1.CompareNucleotidesFormulas(&dna2); error == nil {
-		fmt.Println(dna1.NucleotidesFormula)
-		fmt.Println(dna2.NucleotidesFormula)
-		fmt.Println(consoleView)
-		fmt.Println("The Hamming distance between these two DNA strands is: ", counter)
-	} else {
-		fmt.Println(error)
-	}
-	/*
-		// reflect.TypeOf() for each element of map[ID]interface{}
-		cashOfEmptyInterfaceType()
+var wg sync.WaitGroup
+var mux sync.RWMutex
 
-		// Moon algorithm
-		cardNumbers := []cardNumber{5375414118690212, 378282246310005, 5019717010103742, 76009244561, 4222222222222, 2222990905257051}
-		for _, value := range cardNumbers {
-			fmt.Println(moonAlgorithmCheckCardNumber(value))
-		}*/
+type ID uint32
+
+func PrintEmployeesCash(cash map[ID]*prof.Employee) {
+	mux.Lock()
+	for key := range cash {
+		fmt.Println(cash[key].GetEmployeeInfo())
+	}
+	// Decrement the counter when the goroutine completes.
+	defer wg.Done()
+	mux.Unlock()
 }
 
-type ID int
+func main() {
+	// 2. Асинхронно перебираем используя WaitGroup & RWMutex
+	chiefs := map[ID]*prof.Employee{
+		1: &prof.Employee{
+			Person: &prof.Person{
+				Name:     "Ivan",
+				LastName: "Torch",
+				Age:      25,
+			},
+			Position: "NASA's Head",
+			Role:     "boss",
+		},
 
-func cashOfEmptyInterfaceType() {
-	employees := map[ID]interface{}{ // cash's values has interface{} type
-		0: &prof.Astronaut{
-			Employee: &prof.Employee{
-				Person: &prof.Person{
-					Name:     "Ivan",
-					LastName: "Torch",
-					Age:      25,
-				},
-				Position: "Captain",
+		2: &prof.Employee{
+			Person: &prof.Person{
+				Name:     "Will",
+				LastName: "Smith",
+				Age:      40,
 			},
+			Position: "Producer",
+			Role:     "boss",
 		},
-		1: &prof.Actor{
-			Employee: &prof.Employee{
-				Person: &prof.Person{
-					Name:     "Will",
-					LastName: "Smith",
-					Age:      40,
-				},
-				Position: "Superhero",
+
+		3: &prof.Employee{
+			Person: &prof.Person{
+				Name:     "Tim",
+				LastName: "Dev",
+				Age:      30,
 			},
+			Position: "Manager",
+			Role:     "boss",
 		},
-		2: &prof.SoftwareDeveloper{
-			Employee: &prof.Employee{
-				Person: &prof.Person{
-					Name:     "Tim",
-					LastName: "Dev",
-					Age:      30,
-				},
-				Position: "Jun dev",
+	}
+	employees := map[ID]*prof.Employee{
+		1: &prof.Employee{
+			Person: &prof.Person{
+				Name:     "Boris",
+				LastName: "cool",
+				Age:      40,
 			},
+			Position: "Superhero",
+			Role:     "employee",
 		},
-		4: &prof.Employee{
+
+		2: &prof.Employee{
+			Person: &prof.Person{
+				Name:     "Tim",
+				LastName: "Dev",
+				Age:      30,
+			},
+			Position: "Jun dev",
+			Role:     "employee",
+		},
+
+		3: &prof.Employee{
 			Person: &prof.Person{
 				Name:     "Abstract",
 				LastName: "Employee",
 				Age:      23,
 			},
 			Position: "None",
+			Role:     "employee",
 		},
 	}
-	fmt.Println(mapContainsTypes(employees))
-}
 
-func mapContainsTypes(cash map[ID]interface{}) (types []interface{}) {
-	for key := range cash {
-		types = append(types, reflect.TypeOf(cash[key]))
-	}
-	return
-}
+	wg.Add(1)
+	go PrintEmployeesCash(chiefs)
+	wg.Wait()
+	wg.Add(1)
+	go PrintEmployeesCash(employees)
+	wg.Wait()
 
-type cardNumber int // alias type
-
-func moonAlgorithmCheckCardNumber(cardNumber cardNumber) bool {
-	if len(strconv.Itoa(int(cardNumber))) > 12 { // cardNumbers has length > 12
-		var intSlice []int
-		digit, sum := 0, 0
-		for index := 0; cardNumber > 0; index++ { // % 10 return digit from the end
-			digit = (int(cardNumber)) % 10
-			intSlice = append(intSlice, digit)
-			cardNumber = cardNumber / 10 // /10 makes integer shorter per 1 digit at the end
-			if index%2 != 0 {            // even digits * 2
-				intSlice[index] *= 2
-				if intSlice[index] > 9 { // subtract 9 from any number > 9
-					intSlice[index] -= 9
-				}
+	/*
+		// 1. Создать функцию которая приводит работников к человеку(значение типов)
+			e := &Employee{
+				Person: &Person{
+					Name:     "Abstract",
+					LastName: "Employee",
+					Age:      23,
+				},
+				Position: "None",
 			}
-			sum += intSlice[index] // sum all gotten digits
-		}
-		return sum%10 == 0
-	} else {
-		return false
-	}
+			fmt.Println(e.ConvertEmployeeToPerson())*/
 }

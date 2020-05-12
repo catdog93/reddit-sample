@@ -18,11 +18,26 @@ type Employee struct {
 	Salary     int       `json:"salary,omitempty"`
 	FullTime   bool      `json:"fullTime,omitempty"`
 	Position   string    `json:"position"`
+	Role       Role      `json:"role"`
 }
 
+type Role string
+
+const (
+	EmployeeRole Role = "employee"
+	BossRole     Role = "boss"
+)
+
 func (employee *Employee) GetEmployeeInfo() string {
-	employee.Name = "123"
-	return employee.Person.GetPersonInfo() + "\nHiring date: " + string(employee.HiringDate.Format(customDateFormat)) + ", salary: $ " + strconv.Itoa(employee.Salary) + "\nFull time: " + strconv.FormatBool(employee.FullTime)
+	return employee.Person.GetPersonInfo() + "\nRole: " + string(employee.Role) + "\n" // + "\nHiring date: " + string(employee.HiringDate.Format(customDateFormat)) + ", salary: $ " + strconv.Itoa(employee.Salary) + "\nFull time: " + strconv.FormatBool(employee.FullTime) + "\n"
+}
+
+type EmployeeToPersonConverter interface {
+	ConvertEmployeeToPerson() *Person
+}
+
+func (employee *Employee) ConvertEmployeeToPerson() *Person {
+	return employee.Person
 }
 
 type PersonService interface {
