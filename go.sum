@@ -1,0 +1,4 @@
+github.com/night-codes/mgo-ai v0.0.0-20190929120331-0ce697f507bb h1:EuqBUWNQqT8KiaUdnkttQiROHU1tPppp1lcpSTXfP/w=
+github.com/night-codes/mgo-ai v0.0.0-20190929120331-0ce697f507bb/go.mod h1:yXipOoAlmdAORKd2+jf8g6YFy1HwdttlmYFwHbsuss0=
+gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 h1:VpOs+IwYnYBaFnrNAeB8UUWtL3vEUnzSCL1nVjPhqrw=
+gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22/go.mod h1:yeKp02qBN3iKW1OzL3MGk2IdtZzaj7SFntXj72NppTA=

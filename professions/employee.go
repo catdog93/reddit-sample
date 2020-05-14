@@ -30,6 +30,7 @@ type PersonService interface {
 }
 
 type Person struct {
+	ID          uint64 `bson:"_id"`
 	Name        string `json:"name"`
 	LastName    string `json:"lastName"`
 	Age         int    `json:"age,omitempty"`
