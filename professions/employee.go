@@ -13,6 +13,7 @@ type EmployeeService interface {
 }
 
 type Employee struct {
+	ID         uint64 `bson:"_id"`
 	*Person    `json:"person"`
 	HiringDate time.Time `json:"hiringDate,createdAt"`
 	Salary     int       `json:"salary,omitempty"`
