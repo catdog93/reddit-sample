@@ -35,8 +35,12 @@ func main() {
 			LastName: "Cool",
 		},
 	}
+	var sliceCash [3]interface{}
+	for index := range sliceCash {
+		sliceCash[index] = cash[]
+	}
 
-	session, err := mgo.Dial("mongodb://127.0.0.1")
+	session, err := mgo.Dial("mongodb://127.0.0.1:2717")
 	defer session.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -44,14 +48,12 @@ func main() {
 		collection := session.DB("test1").C("testCollection")
 		ai.Connect(collection)
 
-		fmt.Println(collection.Find(Obj{}))
-
 		empService := rep.ProfessionsService{Collection: collection}
 
 		if err := empService.Create(cash); err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println(empService.Read(Obj{}))
+			fmt.Println(empService.ReadId(1000))
 		}
 	}
 }
