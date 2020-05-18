@@ -6,7 +6,7 @@ import (
 
 type ID int
 
-const NucleotidesAmount int = 17 // number of nucleotides in DNA
+const NucleotidesAmount int = 17 // number of nucleotides in dna
 
 type DNA struct {
 	ID                 ID     `json:"id"`

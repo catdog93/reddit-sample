@@ -6,6 +6,7 @@ import (
 	rep "github.com/catdog93/GoIT/repository"
 	ai "github.com/night-codes/mgo-ai"
 	"gopkg.in/mgo.v2"
+	"log"
 )
 
 var (
@@ -38,12 +39,14 @@ func main() {
 	session, err := mgo.Dial("mongodb://127.0.0.1")
 	defer session.Close()
 	if err != nil {
-		fmt.Println("error ", err)
+		log.Fatal(err)
 	} else {
-		collection := session.DB("test5").C("testCollection")
+		collection := session.DB("test1").C("testCollection")
 		ai.Connect(collection)
 
-		empService := rep.EmployeeService{Collection: collection}
+		fmt.Println(collection.Find(Obj{}))
+
+		empService := rep.ProfessionsService{Collection: collection}
 
 		if err := empService.Create(cash); err != nil {
 			fmt.Println(err)

@@ -6,6 +6,7 @@ type AstronautService interface {
 }
 
 type Astronaut struct {
+	ID            uint64 `bson:"_id"`
 	*Employee     `json:"employee"`
 	SpecialSkills []AustronautSpecialSkill `json:"specialSkill,omitempty"`
 	Experience    Year                     `json:"experience"`

@@ -1,6 +1,7 @@
 package professions
 
 type Actor struct {
+	ID           uint64 `bson:"_id"`
 	*Employee    `json:"employee"`
 	ScopesList   []Scope       `json:"scopes"`
 	Achievements []Achievement `json:"achievements,omitempty"`

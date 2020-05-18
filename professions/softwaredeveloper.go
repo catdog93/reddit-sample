@@ -1,6 +1,7 @@
 package professions
 
 type SoftwareDeveloper struct {
+	ID         uint64 `bson:"_id"`
 	*Employee  `json:"employee"`
 	SkillLevel Skill `json:"skillLevel"` // intern/trainee, Junior, Middle, Senior developer or Architector etc.
 	//Position          Position  `json:"position,omitempty"`          // TeamLead, PM etc.
