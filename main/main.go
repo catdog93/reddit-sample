@@ -16,28 +16,18 @@ var (
 type Obj map[string]interface{}
 
 func main() {
-	cash := make(Obj)
-	cash["employee1"] = prof.Employee{
-		Person: &prof.Person{
-			Name:     "Tim",
-			LastName: "Ku",
-		},
+	cache := make(Obj)
+	cache["person1"] = &prof.Person{
+		Name:     "Tim",
+		LastName: "Ku",
 	}
-	cash["employee2"] = prof.Employee{
-		Person: &prof.Person{
-			Name:     "Mat",
-			LastName: "Tom",
-		},
+	cache["person2"] = &prof.Person{
+		Name:     "Mat",
+		LastName: "Tom",
 	}
-	cash["employee3"] = prof.Employee{
-		Person: &prof.Person{
-			Name:     "Nick",
-			LastName: "Cool",
-		},
-	}
-	var sliceCash [3]interface{}
-	for index := range sliceCash {
-		sliceCash[index] = cash[]
+	cache["person3"] = &prof.Person{
+		Name:     "Nick",
+		LastName: "Cool",
 	}
 
 	session, err := mgo.Dial("mongodb://127.0.0.1:2717")
@@ -50,10 +40,31 @@ func main() {
 
 		empService := rep.ProfessionsService{Collection: collection}
 
-		if err := empService.Create(cash); err != nil {
-			fmt.Println(err)
+		if err := empService.Create(cache["person1"]); err != nil { // BSON field 'insert.documents.0' is the wrong type 'array', expected type 'object'
+			log.Fatal(err)
 		} else {
-			fmt.Println(empService.ReadId(1000))
+			fmt.Println(empService.Read(Obj{}))
 		}
 	}
 }
+
+/*sliceCache := []interface{}{
+	prof.Employee{
+		Person: &prof.Person{
+			Name:     "Nick",
+			LastName: "Cool",
+		},
+	},
+	prof.Employee{
+		Person: &prof.Person{
+			Name:     "Mat",
+			LastName: "Tom",
+		},
+	},
+	prof.Employee{
+		Person: &prof.Person{
+			Name:     "Tim",
+			LastName: "Ku",
+		},
+	},
+}*/

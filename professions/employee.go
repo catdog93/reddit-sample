@@ -13,16 +13,15 @@ type EmployeeService interface {
 }
 
 type Employee struct {
-	ID         uint64 `bson:"_id"`
-	*Person    `json:"person"`
-	HiringDate time.Time `json:"hiringDate,createdAt"`
-	Salary     int       `json:"salary,omitempty"`
-	FullTime   bool      `json:"fullTime,omitempty"`
-	Position   string    `json:"position"`
+	ID         uint64 `json:"id" bson:"_id"`
+	*Person    `json:"person" bson:"person"`
+	HiringDate time.Time `json:"hiringDate" bson:"hiringDate"`
+	Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
+	FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
+	Position   string    `json:"position" bson:"position"`
 }
 
 func (employee *Employee) GetEmployeeInfo() string {
-	employee.Name = "123"
 	return employee.Person.GetPersonInfo() + "\nHiring date: " + string(employee.HiringDate.Format(customDateFormat)) + ", salary: $ " + strconv.Itoa(employee.Salary) + "\nFull time: " + strconv.FormatBool(employee.FullTime)
 }
 
@@ -31,13 +30,13 @@ type PersonService interface {
 }
 
 type Person struct {
-	ID          uint64 `bson:"_id"`
-	Name        string `json:"name"`
-	LastName    string `json:"lastName"`
-	Age         int    `json:"age,omitempty"`
-	Nationality string `json:"-"`
-	Email       string `json:"email,omitempty"`
-	Phone       string `json:"phone,omitempty"`
+	ID          uint64 `json:"id" bson:"_id"`
+	Name        string `json:"name" bson:"name"`
+	LastName    string `json:"lastName" bson:"lastName"`
+	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
+	Nationality string `json:"-" bson:"nationality"`
+	Email       string `json:"-" bson:"email"`
+	Phone       string `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
 func (person *Person) GetPersonInfo() string {
