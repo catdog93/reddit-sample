@@ -4,57 +4,81 @@ import (
 	"fmt"
 	prof "github.com/catdog93/GoIT/professions"
 	rep "github.com/catdog93/GoIT/repository"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	/*ai "github.com/night-codes/mgo-ai"
+	"gopkg.in/mgo.v2"*/
 	"log"
 )
 
-var (
-	result [5]interface{}
-)
-
-type Obj map[string]interface{}
-
 func main() {
-	cache := make(Obj)
-	cache["person1"] = &prof.Person{
-		ID:       bson.NewObjectId(),
-		Name:     "Tim",
-		LastName: "Ku",
+	e1 := prof.Employee{
+		ID: 1,
+		Person: prof.Person{
+			ID:       1,
+			Name:     "Nick",
+			LastName: "Cool",
+		},
+		Salary: 100,
 	}
-	cache["person2"] = &prof.Person{
-		ID:       bson.NewObjectId(),
-		Name:     "Mat",
-		LastName: "Tom",
+	e2 := prof.Employee{
+		ID: 101,
+		Person: prof.Person{
+			ID:       1,
+			Name:     "Vasya",
+			LastName: "Cat",
+		},
+		Salary: 100,
 	}
-	cache["person3"] = &prof.Person{
-		ID:       bson.NewObjectId(),
-		Name:     "Nick",
-		LastName: "Cool",
-	}
-
-	/*p := prof.Person{
-		Name:     "Nick",
-		LastName: "Cool",
-	}
-	p.ID = bson.NewObjectId()*/
-
-	session, err := mgo.Dial("mongodb://127.0.0.1:2717")
-	defer session.Close()
-	if err != nil {
+	if err := rep.Cache.Add(e1); err != nil {
 		log.Fatal(err)
 	} else {
-		collection := session.DB("test1").C("testCollection")
-		//ai.Connect(collection)
+		fmt.Println(rep.Cache.Cache)
+	}
+	emp, isCreated := rep.Cache.FindId(1)
+	fmt.Println(emp, isCreated)
 
-		empService := rep.ProfessionsService{Collection: collection}
+	rep.Cache.ReplaceId(e2)
 
-		if err := empService.Create(prof.Person{ID: bson.NewObjectId(), Name: "Nick"}); err != nil { // BSON field 'insert.documents.0' is the wrong type 'array', expected type 'object'
+	emp, isCreated = rep.Cache.FindId(1)
+	fmt.Println(emp, isCreated)
+	/*fmt.Println()
+	rep.Cache.ReplaceId(1, e2)
+
+	emp, isCreated = rep.Cache.FindId(1)
+	fmt.Println(emp, isCreated)*/
+
+	/*isCreated = rep.Cache.FindId(2)
+	fmt.Printf("document has already created: %v\n", isCreated)*/
+
+	/*
+		session, err := mgo.Dial("mongodb://127.0.0.1:2717")
+		defer session.Close()
+		if err != nil {
 			log.Fatal(err)
 		} else {
-			fmt.Println(empService.Read(Obj{}).All(&result))
-		}
-	}
+			collection := session.DB("test1").C("testCollection")
+			ai.Connect(collection) // bson.NewObjectId()
+
+			p := prof.Person{
+				ID: ai.Next(collection.Name),
+				Name:     "Nick",
+				LastName: "Cool",
+			}
+
+			empService := rep.ProfessionsService{Collection: collection}
+
+			if info, err := empService.DeleteAll(rep.Obj{}); err != nil {
+				log.Fatal(err, info)
+			}
+			if err := empService.Add(p); err != nil {
+				log.Fatal(err)
+			} else {
+				if err := empService.Read(rep.Obj{}).All(&result); err != nil {
+
+				} else {
+					fmt.Println(result)
+				}
+			}
+		}*/
 }
 
 /*sliceCache := []interface{}{

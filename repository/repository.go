@@ -83,14 +83,14 @@ func (empService *ProfessionsService) DeleteId(ID uint64) (err error) {
 	return
 }
 
-func (empService *ProfessionsService) DeleteAll(selector RepositoryService) (info *mgo.ChangeInfo, err error) {
+func (empService *ProfessionsService) DeleteAll(selector interface{}) (info *mgo.ChangeInfo, err error) {
 	if empService.Collection != nil {
 		info, err = empService.Collection.RemoveAll(selector)
 	}
 	return
 }
 
-func (empService ProfessionsService) UpdateAll(selector interface{}, update interface{}) (info *mgo.ChangeInfo, err error) {
+func (empService *ProfessionsService) UpdateAll(selector interface{}, update interface{}) (info *mgo.ChangeInfo, err error) {
 	if empService.Collection != nil {
 		info, err = empService.Collection.UpdateAll(selector, update)
 	}
