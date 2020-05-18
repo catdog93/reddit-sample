@@ -36,12 +36,12 @@ func (empService *ProfessionsService) SetCollection(collection *mgo.Collection) 
 
 func (empService *ProfessionsService) Create(docs ...interface{}) (err error) {
 	if empService.Collection != nil {
-		err = empService.Collection.Insert(docs)
+		err = empService.Collection.Insert(docs...)
 	}
 	return
 }
 
-func (empService *ProfessionsService) Read(query ...interface{}) (resultQuery *mgo.Query) {
+func (empService *ProfessionsService) Read(query interface{}) (resultQuery *mgo.Query) {
 	if empService.Collection != nil {
 		resultQuery = empService.Collection.Find(query)
 	}
@@ -55,9 +55,9 @@ func (empService *ProfessionsService) Update(selector interface{}, update interf
 	return
 }
 
-func (empService *ProfessionsService) Delete(docs ...interface{}) (err error) {
+func (empService *ProfessionsService) Delete(selector interface{}) (err error) {
 	if empService.Collection != nil {
-		err = empService.Collection.Remove(docs)
+		err = empService.Collection.Remove(selector)
 	}
 	return
 }

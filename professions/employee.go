@@ -1,6 +1,7 @@
 package professions
 
 import (
+	"gopkg.in/mgo.v2/bson"
 	"strconv"
 	"time"
 )
@@ -30,13 +31,13 @@ type PersonService interface {
 }
 
 type Person struct {
-	ID          uint64 `json:"id" bson:"_id"`
-	Name        string `json:"name" bson:"name"`
-	LastName    string `json:"lastName" bson:"lastName"`
-	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
-	Nationality string `json:"-" bson:"nationality"`
-	Email       string `json:"-" bson:"email"`
-	Phone       string `json:"phone,omitempty" bson:"phone,omitempty"`
+	ID          bson.ObjectId `json:"id" bson:"_id"`
+	Name        string        `json:"name" bson:"name"`
+	LastName    string        `json:"lastName" bson:"lastName"`
+	Age         int           `json:"age,omitempty" bson:"age,omitempty"`
+	Nationality string        `json:"-" bson:"nationality"`
+	Email       string        `json:"-" bson:"email"`
+	Phone       string        `json:"phone,omitempty" bson:"phone,omitempty"`
 }
 
 func (person *Person) GetPersonInfo() string {
