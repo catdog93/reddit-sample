@@ -9,6 +9,15 @@ import (
 	"sync"
 )
 
+type CacheEmployeeService interface {
+	Add(docs ...professions.Employee) (err error)
+	FindId(id uint64) (employee professions.Employee, isCreated bool, err error)
+	ReplaceId(employee *professions.Employee) (err error)
+	UpsertId(employee *professions.Employee) (err error)
+	DeleteId(id uint64) (err error)
+	DeleteAll() (err error)
+}
+
 type CacheEmployee struct { // Employee.ID equals key of map's element
 	Cache map[uint64]professions.Employee
 	sync.RWMutex

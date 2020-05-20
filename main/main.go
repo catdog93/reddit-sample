@@ -39,7 +39,7 @@ func main() {
 		},
 		Salary: 100,
 	}
-	e3 := prof.Employee{
+	/*e3 := prof.Employee{
 		ID: 1,
 		Person: prof.Person{
 			ID:       1,
@@ -56,7 +56,7 @@ func main() {
 			LastName: "Do",
 		},
 		Salary: 10,
-	}
+	}*/
 
 	if err := rep.Cache.Add(slice...); err != nil {
 		log.Fatal(err)
@@ -73,7 +73,7 @@ func main() {
 	} else {
 		fmt.Println(rep.Cache.Cache)
 	}
-	if err := rep.Cache.UpsertId(&e3); err != nil {
+	/*if err := rep.Cache.UpsertId(&e3); err != nil {
 		log.Fatal(err)
 	} else {
 		fmt.Println(rep.Cache.Cache)
@@ -82,15 +82,15 @@ func main() {
 		log.Fatal(err)
 	} else {
 		fmt.Println(rep.Cache.Cache)
-	}
+	}*/
 	/*if err := rep.Cache.DeleteId(4); err != nil {
 		log.Fatal(err)
 	} else {
 		fmt.Println(rep.Cache.Cache)
 	}*/
-	if err := rep.Cache.DeleteAll(); err != nil {
+	/*if err := rep.Cache.DeleteAll(); err != nil {
 		log.Fatal(err)
 	} else {
 		fmt.Println(rep.Cache.Cache)
-	}
+	}*/
 }
