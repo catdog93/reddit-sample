@@ -10,94 +10,87 @@ import (
 )
 
 func main() {
-	e1 := prof.Employee{
+	slice := []prof.Employee{
+		prof.Employee{
+			ID: 1,
+			Person: prof.Person{
+				ID:       1,
+				Name:     "Nick",
+				LastName: "Cool",
+			},
+			Salary: 100,
+		},
+		prof.Employee{
+			ID: 2,
+			Person: prof.Person{
+				ID:       1,
+				Name:     "Vasya",
+				LastName: "Cat",
+			},
+			Salary: 100,
+		},
+	}
+	e2 := prof.Employee{
 		ID: 1,
 		Person: prof.Person{
 			ID:       1,
-			Name:     "Nick",
-			LastName: "Cool",
+			Name:     "OOP",
+			LastName: "TRUE",
 		},
 		Salary: 100,
 	}
-	e2 := prof.Employee{
-		ID: 101,
+	e3 := prof.Employee{
+		ID: 1,
 		Person: prof.Person{
 			ID:       1,
-			Name:     "Vasya",
-			LastName: "Cat",
+			Name:     "Wit",
+			LastName: "Weather",
 		},
 		Salary: 100,
 	}
-	if err := rep.Cache.Add(e1); err != nil {
+	e4 := prof.Employee{
+		ID: 3,
+		Person: prof.Person{
+			ID:       1,
+			Name:     "Upsert",
+			LastName: "Do",
+		},
+		Salary: 10,
+	}
+
+	if err := rep.Cache.Add(slice...); err != nil {
 		log.Fatal(err)
 	} else {
 		fmt.Println(rep.Cache.Cache)
 	}
-	emp, isCreated := rep.Cache.FindId(1)
-	fmt.Println(emp, isCreated)
-
-	rep.Cache.ReplaceId(e2)
-
-	emp, isCreated = rep.Cache.FindId(1)
-	fmt.Println(emp, isCreated)
-	/*fmt.Println()
-	rep.Cache.ReplaceId(1, e2)
-
-	emp, isCreated = rep.Cache.FindId(1)
-	fmt.Println(emp, isCreated)*/
-
-	/*isCreated = rep.Cache.FindId(2)
-	fmt.Printf("document has already created: %v\n", isCreated)*/
-
-	/*
-		session, err := mgo.Dial("mongodb://127.0.0.1:2717")
-		defer session.Close()
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			collection := session.DB("test1").C("testCollection")
-			ai.Connect(collection) // bson.NewObjectId()
-
-			p := prof.Person{
-				ID: ai.Next(collection.Name),
-				Name:     "Nick",
-				LastName: "Cool",
-			}
-
-			empService := rep.ProfessionsService{Collection: collection}
-
-			if info, err := empService.DeleteAll(rep.Obj{}); err != nil {
-				log.Fatal(err, info)
-			}
-			if err := empService.Add(p); err != nil {
-				log.Fatal(err)
-			} else {
-				if err := empService.Read(rep.Obj{}).All(&result); err != nil {
-
-				} else {
-					fmt.Println(result)
-				}
-			}
-		}*/
+	if emp, isCreated, err := rep.Cache.FindId(e2.ID); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(emp, isCreated)
+	}
+	if err := rep.Cache.ReplaceId(&e2); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(rep.Cache.Cache)
+	}
+	if err := rep.Cache.UpsertId(&e3); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(rep.Cache.Cache)
+	}
+	if err := rep.Cache.UpsertId(&e4); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(rep.Cache.Cache)
+	}
+	/*if err := rep.Cache.DeleteId(4); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(rep.Cache.Cache)
+	}*/
+	if err := rep.Cache.DeleteAll(); err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println(rep.Cache.Cache)
+	}
 }
-
-/*sliceCache := []interface{}{
-	prof.Employee{
-		Person: &prof.Person{
-			Name:     "Nick",
-			LastName: "Cool",
-		},
-	},
-	prof.Employee{
-		Person: &prof.Person{
-			Name:     "Mat",
-			LastName: "Tom",
-		},
-	},
-	prof.Employee{
-		Person: &prof.Person{
-			Name:     "Tim",
-			LastName: "Ku",
-		},
-	},
-}*/

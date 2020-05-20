@@ -15,7 +15,7 @@ type EmployeeService interface {
 type Employee struct {
 	ID         uint64 `json:"id" bson:"_id"`
 	Person     `json:"person" bson:"person"`
-	HiringDate time.Time `json:"hiringDate" bson:"hiringDate"`
+	HiringDate time.Time `json:"hiringDate,createdAt" bson:"hiringDate"`
 	Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
 	FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
 	Position   string    `json:"position" bson:"position"`
