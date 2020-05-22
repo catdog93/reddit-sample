@@ -38,14 +38,16 @@ func (c *CacheEmployee) Add(docs ...professions.Employee) (err error) {
 			errString += fmt.Sprintf("cache Add error: cache can't be nil\n")
 		default:
 			for _, v := range docs {
-				if _, ok := c.Cache[v.ID]; ok {
-					errString += fmt.Sprintf("cache Add error: existed element with ID = %d\n", v.ID)
-				} else {
-					c.Cache[v.ID] = v
+				if v.ID != 0 {
+					if _, ok := c.Cache[v.ID]; ok {
+						errString += fmt.Sprintf("cache Add error: existed element with ID = %d\n", v.ID)
+					} else {
+						c.Cache[v.ID] = v
+					}
 				}
 			}
+			c.Unlock()
 		}
-		c.Unlock()
 	} else {
 		errString += fmt.Sprintf("cache Add error: impossible to add nil value\n")
 	}

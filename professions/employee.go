@@ -1,7 +1,8 @@
 package professions
 
 import (
-	"strconv"
+	"fmt"
+	"log"
 	"time"
 )
 
@@ -14,32 +15,50 @@ type EmployeeService interface {
 
 type Employee struct {
 	ID         uint64 `json:"id" bson:"_id"`
-	Person     `json:"person" bson:"person"`
+	*Person    `json:"person" bson:"person"`
 	HiringDate time.Time `json:"hiringDate,createdAt" bson:"hiringDate"`
 	Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
 	FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
 	Position   string    `json:"position" bson:"position"`
 }
 
+func (e *Employee) ConvertEmployeeToPerson() *Person {
+	return e.Person
+}
+
+/*func (employee *Employee) GetEmployeePosition() string {
+	return employee.GetPersonInfo() + ", position: " + employee.Position
+}
+
 func (employee *Employee) GetEmployeeInfo() string {
 	return employee.Person.GetPersonInfo() + "\nHiring date: " + string(employee.HiringDate.Format(customDateFormat)) + ", salary: $ " + strconv.Itoa(employee.Salary) + "\nFull time: " + strconv.FormatBool(employee.FullTime)
-}
+}*/
 
 type PersonService interface {
 	GetPersonInfo() string
 }
 
 type Person struct {
-	ID          uint64 `json:"id" bson:"_id"`
-	Name        string `json:"name" bson:"name"`
-	LastName    string `json:"lastName" bson:"lastName"`
+	ID   uint64 `json:"id" bson:"_id"`
+	Name string `json:"name" bson:"name"`
+	/*LastName    string `json:"lastName" bson:"lastName"`
 	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
 	Nationality string `json:"-" bson:"nationality"`
 	Email       string `json:"-" bson:"email"`
-	Phone       string `json:"phone,omitempty" bson:"phone,omitempty"`
+	Phone       string `json:"phone,omitempty" bson:"phone,omitempty"`*/
 }
 
-func (person *Person) GetPersonInfo() string {
+func (p *Person) ConvertPersonToEmployee() (e *Employee, err error) {
+	if p != nil {
+		e = &Employee{Person: p}
+		return
+	} else {
+		log.Fatal(fmt.Errorf("", "error ConvertPersonToEmployee: person is nil"))
+		return e, err
+	}
+}
+
+/*func (person *Person) GetPersonInfo() string {
 	return person.Name + " " + person.LastName + ", " + strconv.Itoa(person.Age) + " years old"
 }
 
@@ -55,7 +74,7 @@ func (person *Person) SetAge(age int) bool {
 	return false
 }
 
-func (person *Person) NewPersonBorned(name, lastName, nationality string) bool {
+func (person *Person) NewPersonWasBorned(name, lastName, nationality string) bool {
 	if person == nil {
 		person = new(Person)
 		person.Name = name
@@ -64,8 +83,4 @@ func (person *Person) NewPersonBorned(name, lastName, nationality string) bool {
 		return true
 	}
 	return false
-}
-
-func (employee *Employee) GetEmployeePosition() string {
-	return employee.GetPersonInfo() + ", position: " + employee.Position
-}
+}*/
