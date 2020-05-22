@@ -3,13 +3,21 @@ package main
 import (
 	"fmt"
 	prof "github.com/catdog93/GoIT/professions"
+	ps "github.com/catdog93/GoIT/professionsService"
 	rep "github.com/catdog93/GoIT/repository"
+	"net/http"
+
 	/*ai "github.com/night-codes/mgo-ai"
 	"gopkg.in/mgo.v2"*/
 	"log"
 )
 
 func main() {
+	if err := http.ListenAndServe(":8080", &ps.PersonService{}); err != nil {
+		log.Fatal(err)
+	} else {
+	}
+
 	slice := []prof.Employee{
 		prof.Employee{
 			ID: 1,
@@ -39,7 +47,7 @@ func main() {
 		},
 		Salary: 100,
 	}
-	/*e3 := prof.Employee{
+	e3 := prof.Employee{
 		ID: 1,
 		Person: prof.Person{
 			ID:       1,
@@ -56,7 +64,7 @@ func main() {
 			LastName: "Do",
 		},
 		Salary: 10,
-	}*/
+	}
 
 	if err := rep.Cache.Add(slice...); err != nil {
 		log.Fatal(err)
