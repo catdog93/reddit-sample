@@ -4,6 +4,8 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
+type Obj map[string]interface{}
+
 // service declares CRUD operations
 type RepositoryService interface {
 	SetCollection(collection *mgo.Collection) bool
@@ -41,9 +43,9 @@ func (empService *ProfessionsService) Create(docs ...interface{}) (err error) {
 	return
 }
 
-func (empService *ProfessionsService) Read(query interface{}) (resultQuery *mgo.Query) {
+func (empService *ProfessionsService) ReadAll(results *[]Obj) (err error) {
 	if empService.Collection != nil {
-		resultQuery = empService.Collection.Find(query)
+		err = empService.Collection.Find(Obj{}).All(results)
 	}
 	return
 }
@@ -62,9 +64,9 @@ func (empService *ProfessionsService) Delete(selector interface{}) (err error) {
 	return
 }
 
-func (empService *ProfessionsService) ReadId(ID uint64) (resultQuery *mgo.Query) {
+func (empService *ProfessionsService) ReadId(ID uint64, results *[]Obj) (err error) {
 	if empService.Collection != nil && ID > 0 {
-		resultQuery = empService.Collection.FindId(ID)
+		err = empService.Collection.FindId(ID).All(results)
 	}
 	return
 }
@@ -78,14 +80,14 @@ func (empService *ProfessionsService) UpdateId(ID uint64, update interface{}) (e
 
 func (empService *ProfessionsService) DeleteId(ID uint64) (err error) {
 	if empService.Collection != nil && ID > 0 {
-		err = empService.Collection.Remove(ID)
+		err = empService.Collection.RemoveId(ID)
 	}
 	return
 }
 
-func (empService *ProfessionsService) DeleteAll(selector interface{}) (info *mgo.ChangeInfo, err error) {
+func (empService *ProfessionsService) DeleteAll() (info *mgo.ChangeInfo, err error) {
 	if empService.Collection != nil {
-		info, err = empService.Collection.RemoveAll(selector)
+		info, err = empService.Collection.RemoveAll(Obj{})
 	}
 	return
 }

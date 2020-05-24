@@ -5,6 +5,8 @@ import (
 	"fmt"
 	prof "github.com/catdog93/GoIT/professions"
 	rep "github.com/catdog93/GoIT/repository"
+	ai "github.com/night-codes/mgo-ai"
+	"gopkg.in/mgo.v2"
 	"io/ioutil"
 	"net/http"
 )
@@ -12,58 +14,137 @@ import (
 type PersonService struct {
 }
 
-type PersonCRUD string
+type EmployeeCRUD string
 
 var (
-	CreatePerson PersonCRUD = "/persons/create/"
-	ReadPerson   PersonCRUD = "/persons/read/"
-	UpdatePerson PersonCRUD = "/persons/update/"
-	DeletePerson PersonCRUD = "/persons/delete/"
+	CreateEmployee  EmployeeCRUD = "/employees/create/"
+	ReadEmployee    EmployeeCRUD = "/employees/read/id"
+	ReplaceEmployee EmployeeCRUD = "/employees/replace/id"
+	DeleteEmployee  EmployeeCRUD = "/employees/delete/id"
+
+	ReadEmployees   EmployeeCRUD = "/employees/read/all"
+	DeleteEmployees EmployeeCRUD = "/employees/delete/all"
 )
 
+type ID struct {
+	ID uint64 `json:"id"`
+}
+
+type ReplaceIdRequestBody struct {
+	*prof.Employee `json:"employee"`
+}
+
+var results []rep.Obj
+
 func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
+	if r.Method == "POST" {
 		defer r.Body.Close()
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			fmt.Fprintf(rw, "", err)
-			fmt.Println(err)
+			fmt.Println("error ServeHTTP ", err)
 		}
-		tempPerson := &prof.Person{}
-		profService := &rep.ProfessionsService{}
+		errString := "error "
 
-		personCRUD := PersonCRUD(r.URL.Path)
-		switch personCRUD {
-		case CreatePerson:
-			if err := json.Unmarshal(body, tempPerson); err != nil {
-				fmt.Fprintf(rw, "", err)
-				fmt.Println(err)
-			} else {
-				if e, err := tempPerson.ConvertPersonToEmployee(); err != nil {
-					fmt.Fprintf(rw, "", err)
-					fmt.Println(err)
+		id := &ID{}
+
+		session, err := mgo.Dial("mongodb://127.0.0.1:27017")
+		defer session.Close()
+		if err != nil {
+			fmt.Fprintf(rw, "", err)
+			fmt.Println("error ServeHTTP ", err)
+		} else {
+			collection := session.DB("test1").C("testCollection")
+			ai.Connect(collection)
+			empService := rep.ProfessionsService{Collection: collection}
+
+			employeeCRUD := EmployeeCRUD(r.URL.Path)
+
+			switch employeeCRUD {
+			case CreateEmployee:
+				inputEmployee := &prof.Employee{}
+				if err := json.Unmarshal(body, inputEmployee); err != nil {
+					fmt.Fprintf(rw, "", err, err)
+					fmt.Println(errString, CreateEmployee, err)
 				} else {
-					if err := profService.Create(*e); err != nil {
+					inputEmployee.ID = ai.Next(empService.Collection.Name)
+					inputEmployee.Person.ID = ai.Next(empService.Collection.Name)
+					if err := empService.Create(*inputEmployee); err != nil {
 						fmt.Fprintf(rw, "", err)
-						fmt.Println(err)
+						fmt.Println(errString, CreateEmployee, err)
 					} else {
-						result := profService.ReadId(tempPerson.ID)
-						fmt.Fprintf(rw, "", result)
-						fmt.Println(result)
+						rw.WriteHeader(http.StatusCreated)
 					}
 				}
+			case ReadEmployees:
+				if err := empService.ReadAll(&results); err != nil {
+					fmt.Fprintf(rw, "", err)
+					fmt.Println(errString, ReadEmployees, err)
+				} else {
+					fmt.Fprintf(rw, "", results)
+					fmt.Println(results)
+				}
+			case ReadEmployee:
+				if err := json.Unmarshal(body, &id); err != nil {
+					fmt.Fprintf(rw, "", err)
+					fmt.Println(errString, ReadEmployee, err)
+				} else {
+					if err := empService.ReadId(id.ID, &results); err != nil {
+						fmt.Fprintf(rw, "", err)
+						fmt.Println(errString, ReadEmployee, err)
+					} else {
+						fmt.Fprintf(rw, "", results)
+						fmt.Println(results)
+					}
+				}
+			case ReplaceEmployee:
+				r := &ReplaceIdRequestBody{}
+				if err := json.Unmarshal(body, r); err != nil {
+					fmt.Fprintf(rw, "", err)
+					fmt.Println(errString, ReplaceEmployee, err)
+				} else {
+					if err := empService.ReadId(r.ID, &results); err != nil {
+						fmt.Fprintf(rw, "", err)
+						fmt.Println(errString, ReplaceEmployee, err)
+					} else {
+						if results != nil {
+							if err := empService.UpdateId(r.ID, r.Employee); err != nil {
+								fmt.Fprintf(rw, "", err)
+								fmt.Println(errString, ReplaceEmployee, err)
+							} else {
+								rw.WriteHeader(http.StatusResetContent)
+							}
+						}
+					}
+				}
+			case DeleteEmployee:
+				if err := json.Unmarshal(body, &id); err != nil {
+					fmt.Fprintf(rw, "", err)
+					fmt.Println(errString, DeleteEmployee, err)
+				} else {
+					if err := empService.ReadId(id.ID, &results); err != nil {
+						fmt.Fprintf(rw, "", err)
+						fmt.Println(errString, DeleteEmployee, err)
+					} else {
+						if results != nil {
+							if err := empService.DeleteId(id.ID); err != nil {
+								fmt.Fprintf(rw, "", err)
+								fmt.Println(errString, DeleteEmployee, err)
+							}
+						}
+					}
+				}
+			case DeleteEmployees:
+				if _, err := empService.DeleteAll(); err != nil {
+					fmt.Fprintf(rw, "", err)
+					fmt.Println(errString, DeleteEmployees, err)
+				}
+			default:
+				fmt.Fprintf(rw, "", r.URL.Path)
+				fmt.Println(r.URL.Path)
 			}
+			fmt.Fprintf(rw, "", r.PostForm)
 		}
-	/*case ReadPerson:
-
-	case UpdatePerson:
-
-	case DeletePerson:*/
-
-	default:
-		fmt.Fprintf(rw, "", r.URL.Path)
-		fmt.Println(r.URL.Path)
 	}
-	fmt.Fprintf(rw, "", r.PostForm)
+
 }
