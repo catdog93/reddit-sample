@@ -27,11 +27,11 @@ var (
 )
 
 type ID struct {
-	ID uint64 `json:"id"`
+	ID uint64 `json:"id" bson:"_id"`
 }
 
 type ReplaceIdRequestBody struct {
-	*prof.Employee `json:"employee"`
+	*prof.Employee `json:"employee" bson:"employee"`
 }
 
 var results []rep.Obj
@@ -44,8 +44,7 @@ func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(rw, "", err)
 			fmt.Println("error ServeHTTP ", err)
 		}
-		errString := "error "
-
+		errString := "error: "
 		id := &ID{}
 
 		session, err := mgo.Dial("mongodb://127.0.0.1:27017")
@@ -81,8 +80,17 @@ func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 					fmt.Fprintf(rw, "", err)
 					fmt.Println(errString, ReadEmployees, err)
 				} else {
-					fmt.Fprintf(rw, "", results)
-					fmt.Println(results)
+					if results == nil {
+						rw.WriteHeader(http.StatusNotFound)
+					} else {
+						if bytes, err := json.Marshal(results); err != nil {
+							fmt.Fprintf(rw, "", err)
+							fmt.Println(errString, ReadEmployees, err)
+						} else {
+							fmt.Fprintf(rw, "%s", bytes)
+							fmt.Println(bytes)
+						}
+					}
 				}
 			case ReadEmployee:
 				if err := json.Unmarshal(body, &id); err != nil {
@@ -93,28 +101,29 @@ func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 						fmt.Fprintf(rw, "", err)
 						fmt.Println(errString, ReadEmployee, err)
 					} else {
-						fmt.Fprintf(rw, "", results)
-						fmt.Println(results)
+						if results == nil {
+							rw.WriteHeader(http.StatusNotFound)
+						} else {
+							if bytes, err := json.Marshal(results); err != nil {
+								fmt.Fprintf(rw, "", err)
+								fmt.Println(errString, ReadEmployee, err)
+							} else {
+								fmt.Fprintf(rw, "%s", bytes)
+								fmt.Println(bytes)
+							}
+						}
 					}
 				}
 			case ReplaceEmployee:
-				r := &ReplaceIdRequestBody{}
-				if err := json.Unmarshal(body, r); err != nil {
+				r := ReplaceIdRequestBody{}
+				if err := json.Unmarshal(body, &r); err != nil {
 					fmt.Fprintf(rw, "", err)
 					fmt.Println(errString, ReplaceEmployee, err)
 				} else {
-					if err := empService.ReadId(r.ID, &results); err != nil {
+					if err := empService.UpdateId(r.ID, r.Employee); err != nil {
+						rw.WriteHeader(http.StatusNotFound)
 						fmt.Fprintf(rw, "", err)
 						fmt.Println(errString, ReplaceEmployee, err)
-					} else {
-						if results != nil {
-							if err := empService.UpdateId(r.ID, r.Employee); err != nil {
-								fmt.Fprintf(rw, "", err)
-								fmt.Println(errString, ReplaceEmployee, err)
-							} else {
-								rw.WriteHeader(http.StatusResetContent)
-							}
-						}
 					}
 				}
 			case DeleteEmployee:
@@ -122,16 +131,9 @@ func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 					fmt.Fprintf(rw, "", err)
 					fmt.Println(errString, DeleteEmployee, err)
 				} else {
-					if err := empService.ReadId(id.ID, &results); err != nil {
+					if err := empService.DeleteId(id.ID); err != nil { // ? action
 						fmt.Fprintf(rw, "", err)
 						fmt.Println(errString, DeleteEmployee, err)
-					} else {
-						if results != nil {
-							if err := empService.DeleteId(id.ID); err != nil {
-								fmt.Fprintf(rw, "", err)
-								fmt.Println(errString, DeleteEmployee, err)
-							}
-						}
 					}
 				}
 			case DeleteEmployees:
@@ -143,8 +145,6 @@ func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(rw, "", r.URL.Path)
 				fmt.Println(r.URL.Path)
 			}
-			fmt.Fprintf(rw, "", r.PostForm)
 		}
 	}
-
 }

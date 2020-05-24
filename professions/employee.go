@@ -16,10 +16,10 @@ type EmployeeService interface {
 type Employee struct {
 	ID         uint64 `json:"id" bson:"_id"`
 	*Person    `json:"person" bson:"person"`
-	HiringDate time.Time `json:"hiringDate,createdAt" bson:"hiringDate"`
+	HiringDate time.Time `json:"hiringDate,omitempty" bson:"hiringDate,omitempty"`
 	Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
 	FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
-	Position   string    `json:"position" bson:"position"`
+	Position   string    `json:"position,omitempty" bson:"position,omitempty"`
 }
 
 func (e *Employee) ConvertEmployeeToPerson() *Person {
@@ -39,7 +39,7 @@ type PersonService interface {
 }
 
 type Person struct {
-	ID   uint64 `json:"id" bson:"_id"`
+	ID   uint64 `json:"id" bson:"_id,omitempty"`
 	Name string `json:"name" bson:"name"`
 	/*LastName    string `json:"lastName" bson:"lastName"`
 	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
