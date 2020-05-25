@@ -38,8 +38,8 @@ var results []rep.Obj
 
 func (p *PersonService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		defer r.Body.Close()
 		body, err := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
 		if err != nil {
 			fmt.Fprintf(rw, "", err)
 			fmt.Println("error ServeHTTP ", err)
