@@ -3,7 +3,6 @@ package professions
 import (
 	"fmt"
 	"log"
-	"time"
 )
 
 const customDateFormat string = "02-Jan-2006"
@@ -14,12 +13,12 @@ type EmployeeService interface {
 }
 
 type Employee struct {
-	ID         uint64 `json:"id" bson:"_id"`
-	*Person    `json:"person" bson:"person"`
-	HiringDate time.Time `json:"hiringDate,omitempty" bson:"hiringDate,omitempty"`
-	Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
-	FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
-	Position   string    `json:"position,omitempty" bson:"position,omitempty"`
+	ID      uint64 `json:"id" bson:"_id"  binding:"required" form:"id"`
+	*Person `json:"person" bson:"person" binding:"required" form:"person"`
+	//HiringDate time.Time `json:"hiringDate,omitempty" bson:"hiringDate,omitempty"`
+	//Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
+	//FullTime   bool      `json:"fullTime,omitempty" bson:"fullTime,omitempty"`
+	//Position   string    `json:"position,omitempty" bson:"position,omitempty"`
 }
 
 func (e *Employee) ConvertEmployeeToPerson() *Person {
@@ -39,8 +38,8 @@ type PersonService interface {
 }
 
 type Person struct {
-	ID   uint64 `json:"id" bson:"_id,omitempty"`
-	Name string `json:"name" bson:"name"`
+	ID   uint64 `json:"id" bson:"_id,omitempty" binding:"required" form:"id"`
+	Name string `json:"name" bson:"name" binding:"required" form:"name"`
 	/*LastName    string `json:"lastName" bson:"lastName"`
 	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
 	Nationality string `json:"-" bson:"nationality"`

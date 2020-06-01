@@ -6,9 +6,13 @@ import (
 
 type Obj map[string]interface{}
 
+type ID struct {
+	ID uint64 `json:"id" bson:"_id"`
+}
+
 // service declares CRUD operations
-type RepositoryService interface {
-	SetCollection(collection *mgo.Collection) bool
+type Repository interface {
+	Connect() error
 
 	Create(docs ...interface{}) (err error)
 	Read(query interface{}) (resultQuery *mgo.Query)
@@ -23,78 +27,82 @@ type RepositoryService interface {
 	DeleteAll(selector interface{}) (info *mgo.ChangeInfo, err error)
 }
 
-// struct implements CRUD operations, it can be used for any Collection
-type ProfessionsService struct {
-	Collection *mgo.Collection
-}
+//func Connect(url, dbName, collectionName string) error {
+//	session, err := mgo.Dial(url)
+//	if err != nil {
+//		return err
+//	}
+//	defer session.Close()
+//	ai.Connect(session.DB(dbName).C(collectionName))
+//	return nil
+//}
 
-func (empService *ProfessionsService) SetCollection(collection *mgo.Collection) bool {
+func Create(collection *mgo.Collection, docs ...interface{}) (err error) {
 	if collection != nil {
-		empService.Collection = collection
-		return true
-	}
-	return false
-}
-
-func (empService *ProfessionsService) Create(docs ...interface{}) (err error) {
-	if empService.Collection != nil {
-		err = empService.Collection.Insert(docs...)
+		err = collection.Insert(docs...)
 	}
 	return
 }
 
-func (empService *ProfessionsService) ReadAll(results *[]Obj) (err error) {
-	if empService.Collection != nil {
-		err = empService.Collection.Find(Obj{}).All(results)
+func ReadAll(results *[]Obj, collection *mgo.Collection) (err error) {
+	if collection != nil {
+		err = collection.Find(Obj{}).All(results)
 	}
 	return
 }
 
-func (empService *ProfessionsService) Update(selector interface{}, update interface{}) (err error) {
-	if empService.Collection != nil {
-		err = empService.Collection.Update(selector, update)
+func Update(selector interface{}, update interface{}, collection *mgo.Collection) (err error) {
+	if collection != nil {
+		err = collection.Update(selector, update)
 	}
 	return
 }
 
-func (empService *ProfessionsService) Delete(selector interface{}) (err error) {
-	if empService.Collection != nil {
-		err = empService.Collection.Remove(selector)
+func Delete(selector interface{}, collection *mgo.Collection) (err error) {
+	if collection != nil {
+		err = collection.Remove(selector)
 	}
 	return
 }
 
-func (empService *ProfessionsService) ReadId(ID uint64, results *[]Obj) (err error) {
-	if empService.Collection != nil && ID > 0 {
-		err = empService.Collection.FindId(ID).All(results)
+func ReadId(ID ID, results []Obj, collection *mgo.Collection) (err error) {
+	if collection != nil && ID.ID > 0 {
+		err = collection.FindId(ID.ID).All(results)
 	}
 	return
 }
 
-func (empService *ProfessionsService) UpdateId(ID uint64, update interface{}) (err error) {
-	if empService.Collection != nil && ID > 0 {
-		err = empService.Collection.UpdateId(ID, update)
+func ReadIdd(ID ID, result *Obj, collection *mgo.Collection) (err error) {
+	if collection != nil && ID.ID > 0 {
+		err = collection.FindId(ID.ID).One(result)
 	}
 	return
 }
 
-func (empService *ProfessionsService) DeleteId(ID uint64) (err error) {
-	if empService.Collection != nil && ID > 0 {
-		err = empService.Collection.RemoveId(ID)
+func UpdateId(ID uint64, update interface{}, collection *mgo.Collection) (err error) {
+	if collection != nil && ID > 0 {
+		err = collection.UpdateId(ID, update)
 	}
 	return
 }
 
-func (empService *ProfessionsService) DeleteAll() (info *mgo.ChangeInfo, err error) {
-	if empService.Collection != nil {
-		info, err = empService.Collection.RemoveAll(Obj{})
+func DeleteId(ID uint64, collection *mgo.Collection) (err error) {
+	if collection != nil && ID > 0 {
+		err = collection.RemoveId(ID)
 	}
 	return
 }
 
-func (empService *ProfessionsService) UpdateAll(selector interface{}, update interface{}) (info *mgo.ChangeInfo, err error) {
-	if empService.Collection != nil {
-		info, err = empService.Collection.UpdateAll(selector, update)
+func DeleteAll(collection *mgo.Collection) (info *mgo.ChangeInfo, err error) {
+	if collection != nil {
+		info, err = collection.RemoveAll(Obj{})
+	}
+	return
+}
+
+func UpdateAll(selector interface{}, update interface{}, collection *mgo.Collection) (info *mgo.ChangeInfo, err error) {
+	if collection != nil {
+		info, err = collection.UpdateAll(selector, update)
 	}
 	return
 }
