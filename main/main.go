@@ -1,7 +1,7 @@
 package main
 
 import (
-	controller "github.com/catdog93/GoIT/employeeController"
+	controller "github.com/catdog93/GoIT/controller"
 	"github.com/gin-gonic/gin"
 	"log"
 )

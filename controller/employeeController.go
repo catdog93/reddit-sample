@@ -1,9 +1,9 @@
-package employeeController
+package controller
 
 import (
 	"fmt"
-	service "github.com/catdog93/GoIT/employeeService"
 	prof "github.com/catdog93/GoIT/professions"
+	service "github.com/catdog93/GoIT/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

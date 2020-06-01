@@ -1,4 +1,4 @@
-package employeeService
+package service
 
 import (
 	"fmt"
