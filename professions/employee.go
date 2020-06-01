@@ -13,7 +13,7 @@ type EmployeeService interface {
 }
 
 type Employee struct {
-	ID      uint64 `json:"id" bson:"_id"  binding:"required" form:"id"`
+	ID      uint64 `json:"id" bson:"_id" form:"id"`
 	*Person `json:"person" bson:"person" binding:"required" form:"person"`
 	//HiringDate time.Time `json:"hiringDate,omitempty" bson:"hiringDate,omitempty"`
 	//Salary     int       `json:"salary,omitempty" bson:"salary,omitempty"`
@@ -38,7 +38,7 @@ type PersonService interface {
 }
 
 type Person struct {
-	ID   uint64 `json:"id" bson:"_id,omitempty" binding:"required" form:"id"`
+	ID   uint64 `json:"id" bson:"_id,omitempty" form:"id"`
 	Name string `json:"name" bson:"name" binding:"required" form:"name"`
 	/*LastName    string `json:"lastName" bson:"lastName"`
 	Age         int    `json:"age,omitempty" bson:"age,omitempty"`
