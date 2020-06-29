@@ -1,14 +1,9 @@
-# testTask written in Go (REST API with Gin-Gonic, mongodb/mongo-go-driver)
+# testTask written in Go & JS (REST API with Gin-Gonic & mgo.v2; jQuery)
 Test task should be written in Go.
 
-Create API for working with user data using a database
+Create API for working with users and posts data using a database
 MongoDb.
 
 Required Functionality:
-- create a users table and fill it with test data (testTaskBitmediaLabs/data/users.json)
-- develop the functionality of requesting a list of users and information about them
-- When uploading the list of users, page-by-page should be implemented
-navigation
-- make an API to add a new user to the users table (data validation should be provided), also the email of the user must
-be unique
-- make an API for editing user data (user id comes in request)
+
+- make subscription mechanism to follow other users posts
