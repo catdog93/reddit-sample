@@ -9,14 +9,18 @@ import (
 )
 
 const (
+	CreatePostURI = "/postCreation"
+
 	text        = "inputText"
 	image       = "inputImage"
+	video       = "inputVideo"
 	tokenString = "token"
 )
 
 func CreatePost(context *gin.Context) {
 	text := context.PostForm(text)
 	imageURL := context.PostForm(image)
+	videoURL := context.PostForm(video)
 
 	token, err := context.Cookie(tokenString)
 	if err != nil {
@@ -32,16 +36,23 @@ func CreatePost(context *gin.Context) {
 	post := entity.Post{
 		Text:     text,
 		ImageURL: imageURL,
+		VideoURL: videoURL,
 		Date:     time.Now(),
 		UserID:   user.ID,
+	}
+	err = post.GetYoutubeVideoURL()
+	if err != nil {
+		context.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 	err = service.CreatePost(post)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())
 	}
+	context.Redirect(http.StatusMovedPermanently, MblogURI+SubscriptionsURI)
 }
 
-func CreatePostForm(context *gin.Context) {
+func GetCreatePostForm(context *gin.Context) {
 	token, err := context.Cookie(tokenString)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())

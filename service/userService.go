@@ -1,4 +1,4 @@
-// Service is abstract layer between controller and repository. Preferably, it contains some logic here.
+// Service contains some logic. Used by controller.
 package service
 
 import (
@@ -8,64 +8,86 @@ import (
 )
 
 const (
-	DBURL           = "mongodb://localhost:27017"
-	DBName          = "Mblog"
-	UsersCollection = "Users"
+	DBURL               = "mongodb://localhost:2717"
+	DBName              = "Mblog"
+	UsersCollectionName = "Users"
 )
+
+var UsersCollection *mgo.Collection
 
 type Obj map[string]interface{}
 
-type ID struct {
-	ID string `json:"id" bson:"_id"`
-}
-
-// Function provides pagination of users data, requires limit number of users per page and number of page
-//func GetUsersPagination(limit int64, pageNumber int64) (*[]entity.User, error) {
-//	return rep.ReadUsersPagination(limit, pageNumber)
-//}
-//
-//func GetUserByID(id string) (entity.User, error) {
-//	return rep.ReadUserByID(id)
-//}
-
 func CreateUser(user entity.User) error {
-	session, err := mgo.Dial(DBURL)
-	if err != nil {
-		return err
-	}
-	collection := session.DB(DBName).C(UsersCollection)
-
-	ai.Connect(session.DB(DBName).C(UsersCollection))
-	user.ID = ai.Next(UsersCollection)
-	return collection.Insert(interface{}(user))
-}
-
-func FindUser(user entity.UserBody) (*entity.User, error) {
-	session, err := mgo.Dial(DBURL)
-	if err != nil {
-		return nil, err
-	}
-	collection := session.DB(DBName).C(UsersCollection)
-	//query := collection.Find(user)
-	//number, err := query.Count()
-	//if err != nil {
-	//	return err
-	//}
-	//if number != 1 {
-	//	return errors.New("Can't find user in DB")
-	//}
-	result := entity.User{}
-	err = collection.Find(Obj{"email": user.Email, "password": user.Password}).One(&result)
-	return &result, err
+	user.ID = ai.Next(UsersCollectionName)
+	user.UsersIDs = []uint64{user.ID}
+	return UsersCollection.Insert(interface{}(user))
 }
 
 func FindUserByEmail(email string) (*entity.User, error) {
-	session, err := mgo.Dial(DBURL)
-	if err != nil {
-		return nil, err
-	}
-	collection := session.DB(DBName).C(UsersCollection)
 	result := entity.User{}
-	err = collection.Find(Obj{"email": email}).One(&result)
+	err := UsersCollection.Find(Obj{"email": email}).One(&result)
 	return &result, err
+}
+
+func Subscribe(currentUser *entity.User, email string) error {
+	userSubscription, err := FindUserByEmail(email)
+	if err != nil {
+		return err
+	}
+	isSubscribed, _ := CheckSubscription(currentUser.UsersIDs, userSubscription.ID)
+	if isSubscribed {
+		return nil
+	}
+	if currentUser.UsersIDs == nil {
+		currentUser.UsersIDs = []uint64{userSubscription.ID}
+	} else {
+		currentUser.UsersIDs = append(currentUser.UsersIDs, userSubscription.ID)
+	}
+
+	user := Obj{
+		"email":    currentUser.Email,
+		"password": currentUser.Password,
+		"usersIDs": currentUser.UsersIDs,
+	}
+	err = UsersCollection.UpdateId(currentUser.ID, user)
+	return err
+}
+
+// also returns index
+func CheckSubscription(userIDs []uint64, userID uint64) (bool, int) {
+	if userIDs != nil {
+		for index, id := range userIDs {
+			if id == userID {
+				return true, index
+			}
+		}
+	}
+	return false, -1
+}
+
+func Unfollow(currentUser *entity.User, email string) error {
+	if currentUser.Email != email {
+		userSubscription, err := FindUserByEmail(email)
+		if err != nil {
+			return err
+		}
+		isSubscribed, index := CheckSubscription(currentUser.UsersIDs, userSubscription.ID)
+		if !isSubscribed {
+			return nil
+		}
+
+		// quick removing one following from slice
+		currentUser.UsersIDs[index] = currentUser.UsersIDs[len(currentUser.UsersIDs)-1]
+		currentUser.UsersIDs[len(currentUser.UsersIDs)-1] = 0
+		currentUser.UsersIDs = currentUser.UsersIDs[:len(currentUser.UsersIDs)-1]
+
+		user := Obj{
+			"email":    currentUser.Email,
+			"password": currentUser.Password,
+			"usersIDs": currentUser.UsersIDs,
+		}
+		err = UsersCollection.UpdateId(currentUser.ID, user)
+		return err
+	}
+	return nil
 }

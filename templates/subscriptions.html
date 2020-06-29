@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Followings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="/files/css/style.css" rel="stylesheet" type="text/css"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/files/js/script.js"></script>
+    <script type="text/javascript" src="/files/js/cufon-yui.js"></script>
+    <script type="text/javascript" src="/files/js/arial.js"></script>
+    <script type="text/javascript" src="/files/js/cuf_run.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="main_resize">
+        <div class="header">
+            <div class="logo">
+                <h1><a href="#"><span>Social</span>Net<small>Simple web template</small></a></h1>
+            </div>
+            <div class="clr"></div>
+            <div class="menu_nav">
+                <ul>
+                    <li><a href="/mblog/home">Home</a></li>
+                    <li><a href="/mblog/postCreation">Create post</a></li>
+                    <li class="active"><a href="/mblog/subscriptions">My Subscriptions</a></li>
+                </ul>
+                <div class="clr"></div>
+            </div>
+            <div class="hbg"><img src="/files/images/header_images.jpg" width="923" height="291" alt=""/></div>
+        </div>
+        <div class="content">
+            <div class="content_bg">
+                <div class="mainbar list-group">
+                    <div class="article">
+                        {{range .}}
+                            <p class="post-data">
+                                <span class="post">{{.Date}} &nbsp;|&nbsp; Posted by
+                                <a class="email">{{.Email}}</a>
+                                <button type="button" class="followbtn">Follow</button>
+                                <button type="button" class="unfollowbtn">Unfollow</button>
+                                    </span>
+                            </p>
+                            <img class="image" {{if .ImageURL }} src="{{.ImageURL}}" {{else}} hidden {{end}}
+                                 alt="post's image"/>
+                            <iframe width="560"
+                                    height="315" {{if .YoutubeVideoURL}} src="{{.YoutubeVideoURL}}" {{else}} hidden {{end}}
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            <video class="video" width="560" height="315" {{if .VideoURL}} {{else}} hidden {{end}}
+                                   controls>
+                                <source src="{{.VideoURL}}" type="video/webm">
+                                <source src="{{.VideoURL}}" type="video/mov">
+                                <source src="{{.VideoURL}}" type="video/mpeg4">
+                                <source src="{{.VideoURL}}" type="video/avi">
+                                <source src="{{.VideoURL}}" type="video/wmw">
+                                <source src="{{.VideoURL}}" type="video/mp4">
+                                Video format isn't supported or your browser doesn't support the <\video> tag.
+                            </video>
+                            <p class="text">{{.Text}}</p>
+                            <div class="margin"></div>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="sidebar">
+                    <div class="gadget">
+                        <h2 class="star"><span>Sidebar</span> Menu</h2>
+                        <div class="clr"></div>
+                        <ul class="sb_menu">
+                            <li class="active"><a href="/mblog/home">Home</a></li>
+                            <li><a href="/mblog/postCreation">Create Post</a></li>
+                            <li><a href="/mblog/subscriptions">My subscriptions</a></li>
+                        </ul>
+                    </div>
+                    <div class="gadget">
+                        <h2 class="star"><span>Thanks Creators</span></h2>
+                        <div id="catsDiv" class="clr"></div>
+                        <ul class="ex_menu">
+                            <li>
+                                <a href="https://mail.google.com/mail/u/0/#inbox?compose=CllgCJfpsXhnckcQwFrDFKjPkqrkWFBSvzTCCPGlRqcxCnknQdlsTWVkqQQSHCjQkBWdVHxtPFL">Me</a><br/>
+                            </li>
+                            <li id="cats" hidden>
+                                <iframe width="225" height="112" src="https://www.youtube.com/embed/kJeNbdWzk4U"
+                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="gadget">
+                        <h2 class="star"><span>Wise Words</span></h2>
+                        <div class="clr"></div>
+                        <div class="testi">
+                            <p><span class="q"><img src="/files/images/qoute_1.gif" width="20" height="15"
+                                                    alt=""/></span> We can let circumstances rule us, or we can take
+                                charge and rule our lives from within. <span class="q"><img
+                                            src="/files/images/qoute_2.gif" width="20" height="15" alt=""/></span></p>
+                            <p class="title"><strong>Earl Nightingale</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="clr"></div>
+            </div>
+        </div>
+    </div>
+    <div class="fbg">
+        <div class="fbg_resize">
+            <div class="col c1">
+
+                <div class="col c2">
+
+                </div>
+                <div class="col c3">
+
+                </div>
+                <div class="clr"></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+
+    </div>
+    <div align=center>This template downloaded form <a href='http://all-free-download.com/free-website-templates/'>free
+            website templates</a></div>
+</div>
+</body>
+</html>

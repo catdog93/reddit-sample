@@ -1,11 +1,32 @@
 @charset "utf-8";
+
+.image {
+	/*display: block;*/
+	/*margin-left: auto;*/
+	/*margin-right: auto;*/
+	width: 50%;
+	height: 50%;
+}
+
+.text{
+	font: normal 16px Verdana;
+	color: black;
+}
+
+.margin {
+	margin-bottom: 40px;
+}
+
+button {
+	margin-left: 20px;
+}
+
 body {
 	margin:0;
 	padding:0;
 	width:100%;
 	color:#959595;
 	font:normal 12px/1.8em Arial, Helvetica, sans-serif;
-	background:url(files/images/bg.jpg);
 }
 html {
 	padding:0;
@@ -14,7 +35,6 @@ html {
 .main {
 	padding:0;
 	margin:0;
-	background:url(files/images/main_bg.jpg) repeat-y center;
 }
 .logo {
 	float:left;
@@ -53,8 +73,7 @@ p {
 	padding:0 0 8px 0;
 	font:normal 12px/1.8em Arial, Helvetica, sans-serif;
 }
-p.spec {
-}
+
 a {
 	color:#97c950;
 	text-decoration:underline;
@@ -70,7 +89,6 @@ a.rm, a.com {
 .main_resize {
 	margin:0 auto;
 	width: 100%;
-	/*width:969px;*/
 }
 .header {
 	margin:0 auto;
@@ -94,7 +112,6 @@ a.rm, a.com {
 	margin:0;
 	padding:15px 5px 15px 0;
 	float:left;
-	background:url(files/images/menu_line.jpg) repeat-x top;
 }
 .menu_nav ul li a {
 	display:block;
@@ -121,7 +138,7 @@ a.rm, a.com {
 	float:right;
 	width:638px;
 }
-.mainbar img {
+.mainbar img, video {
 	padding:4px;
 	border:1px solid #f2f2f1;
 	background:#FFF;
@@ -210,7 +227,6 @@ ul.ex_menu li a:hover {
 }
 .fbg {
 	padding:10px 0;
-	background:url(files/images/fbg_bg.jpg) repeat-y center;
 }
 .fbg_resize {
 	margin:0 auto;
@@ -231,7 +247,6 @@ ul.ex_menu li a:hover {
 .fbg .col {
 	margin:0;
 	float:left;
-	background:url(files/images/fbg_line.gif) repeat-y right;
 }
 .fbg .c1 {
 	padding:0 15px 0 0;
@@ -252,9 +267,6 @@ ul.ex_menu li a:hover {
 .fbg .c3 img {
 	margin:8px 16px 4px 0;
 	float:left;
-}
-.footer {
-	background:url(files/images/main_bg.jpg) repeat-y center;
 }
 .footer_resize {
 	margin:0 auto;

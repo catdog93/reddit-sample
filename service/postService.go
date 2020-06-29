@@ -7,48 +7,48 @@ import (
 )
 
 const (
-	PostsCollection = "Posts"
+	PostsCollectionName = "Posts"
 )
 
+var PostsCollection *mgo.Collection
+
+var QueryHome = []Obj{
+	{
+		"$lookup": Obj{
+			"from":         UsersCollectionName,
+			"localField":   "userID",
+			"foreignField": "_id",
+			"as":           "userOwner",
+		},
+	},
+}
+
 func CreatePost(post entity.Post) error {
-	session, err := mgo.Dial(DBURL)
-	if err != nil {
-		return err
-	}
-	collection := session.DB(DBName).C(PostsCollection)
-
-	ai.Connect(session.DB(DBName).C(PostsCollection))
-	post.ID = ai.Next(PostsCollection)
-	return collection.Insert(interface{}(post))
+	post.ID = ai.Next(PostsCollectionName)
+	return PostsCollection.Insert(interface{}(post))
 }
 
-func GetPostWithOwner(post *entity.Post) (*entity.PostWithEmail, error) {
-	session, err := mgo.Dial(DBURL)
+func GetPostsWithEmail(ids ...uint64) ([]entity.PostWithEmail, error) {
+	var customPosts []entity.PostWithEmbeddedUser
+	var pipe *mgo.Pipe
+	pipe = PostsCollection.Pipe(QueryHome)
+	err := pipe.All(&customPosts)
 	if err != nil {
 		return nil, err
 	}
-	collection := session.DB(DBName).C(PostsCollection)
-	result := entity.User{}
-	err = collection.FindId(post.UserID).One(&result)
-	if err != nil {
-		return nil, err
+	postsWithEmail := make([]entity.PostWithEmail, 0, len(customPosts))
+	if ids != nil {
+		for _, value := range customPosts {
+			for _, id := range ids {
+				if value.UserID == id {
+					postsWithEmail = append(postsWithEmail, value.CreatePostWithEmail())
+				}
+			}
+		}
+		return postsWithEmail, nil
 	}
-	postWithEmail := &entity.PostWithEmail{
-		Date:     post.Date,
-		Text:     post.Text,
-		ImageURL: post.ImageURL,
-		Email:    result.Email,
+	for _, value := range customPosts {
+		postsWithEmail = append(postsWithEmail, value.CreatePostWithEmail())
 	}
-	return postWithEmail, nil
-}
-
-func GetPost() (*entity.Post, error) {
-	session, err := mgo.Dial(DBURL)
-	if err != nil {
-		return nil, err
-	}
-	collection := session.DB(DBName).C(PostsCollection)
-	post := entity.Post{}
-	err = collection.Find(Obj{}).One(&post)
-	return &post, err
+	return postsWithEmail, nil
 }

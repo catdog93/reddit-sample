@@ -5,8 +5,8 @@
     <title>CreatePost</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -25,15 +25,29 @@
         button {
             margin-top: 40px;
         }
+
+        h5 {
+            margin-bottom: 40px;
+        }
+
+        p {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 <div id="container" class="text-center">
-    <form action="/mblog/createPost" method="post" id="createPost">
+    <form action="/mblog/postCreation" method="post" id="createPost">
         <h5 class="text-wrap">New Post of user: {{.}}</h5>
         <input type="text" id="inputText" name="inputText" class="text form-control" placeholder="Post's text"
                autofocus="" required="">
         <input type="url" id="inputImage" name="inputImage" class="url form-control" placeholder="Image's URL">
+        <input type="url" id="inputVideo" name="inputVideo" class="url form-control" placeholder="Video's URL">
+        <span>
+            <p>
+                To copy any link by opening image or video in new window (right click on it-> Open in New Tab ->copy link :)
+            </p>
+        </span>
         <button class="btn btn-light btn-lg btn-block" type="submit">Create</button>
     </form>
 </div>
