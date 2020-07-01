@@ -27,7 +27,7 @@ func CreatePost(context *gin.Context) {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	userAuth, _ := service.Tokens[token]
+	userAuth, _ := service.TokensCache[token]
 	user, err := service.FindUserByEmail(userAuth.Email)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())
@@ -58,6 +58,6 @@ func GetCreatePostForm(context *gin.Context) {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, _ := service.Tokens[token]
+	user, _ := service.TokensCache[token]
 	context.HTML(http.StatusOK, "createPostForm.html", user.Email)
 }

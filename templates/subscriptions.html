@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"
             integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
             crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/files/js/script.js"></script>
+    <script type="text/javascript" src="/files/js/subscriptions.js"></script>
     <script type="text/javascript" src="/files/js/cufon-yui.js"></script>
     <script type="text/javascript" src="/files/js/arial.js"></script>
     <script type="text/javascript" src="/files/js/cuf_run.js"></script>
@@ -49,7 +49,7 @@
                                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen></iframe>
                             <video class="video" width="560" height="315" {{if .VideoURL}} {{else}} hidden {{end}}
-                                   controls>
+                                   controls autoplay muted>
                                 <source src="{{.VideoURL}}" type="video/webm">
                                 <source src="{{.VideoURL}}" type="video/mov">
                                 <source src="{{.VideoURL}}" type="video/mpeg4">
@@ -78,7 +78,7 @@
                         <div id="catsDiv" class="clr"></div>
                         <ul class="ex_menu">
                             <li>
-                                <a href="https://mail.google.com/mail/u/0/#inbox?compose=CllgCJfpsXhnckcQwFrDFKjPkqrkWFBSvzTCCPGlRqcxCnknQdlsTWVkqQQSHCjQkBWdVHxtPFL">Me</a><br/>
+                                <a href="https://mail.google.com/mail/u/0/#inbox?compose=CllgCJfpsXhnckcQwFrDFKjPkqrkWFBSvzTCCPGlRqcxCnknQdlsTWVkqQQSHCjQkBWdVHxtPFL">To creator</a><br/>
                             </li>
                             <li id="cats" hidden>
                                 <iframe width="225" height="112" src="https://www.youtube.com/embed/kJeNbdWzk4U"

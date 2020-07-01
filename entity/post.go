@@ -10,7 +10,7 @@ import (
 const (
 	youtube    = "youtube"
 	youtube2   = "youtu.be"
-	youtubeURL = "https://www.youtube.com/embed/%s"
+	youtubeURL = "https://www.youtube.com/embed/%s/?autoplay=1&mute=1"
 
 	pattern = "https:\\/\\/www.youtube.com\\/embed/\\.*"
 )

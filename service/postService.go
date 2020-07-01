@@ -28,7 +28,8 @@ func CreatePost(post entity.Post) error {
 	return PostsCollection.Insert(interface{}(post))
 }
 
-func GetPostsWithEmail(ids ...uint64) ([]entity.PostWithEmail, error) {
+// if ids == nil, function returns all posts from DB. Otherwise returns posts of specified users
+func GetPostsWithEmail(userIDs ...uint64) ([]entity.PostWithEmail, error) {
 	var customPosts []entity.PostWithEmbeddedUser
 	var pipe *mgo.Pipe
 	pipe = PostsCollection.Pipe(QueryHome)
@@ -37,9 +38,9 @@ func GetPostsWithEmail(ids ...uint64) ([]entity.PostWithEmail, error) {
 		return nil, err
 	}
 	postsWithEmail := make([]entity.PostWithEmail, 0, len(customPosts))
-	if ids != nil {
+	if userIDs != nil {
 		for _, value := range customPosts {
-			for _, id := range ids {
+			for _, id := range userIDs {
 				if value.UserID == id {
 					postsWithEmail = append(postsWithEmail, value.CreatePostWithEmail())
 				}

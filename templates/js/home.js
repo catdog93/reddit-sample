@@ -1,6 +1,8 @@
+let timeout = 500
+
 $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() === $(document).height()) {
-        alert("Content ended for now, have a nice day :)")
+        // alert("Content ended for now, have a nice day :)")
         window.document.getElementById("cats").hidden = false
     }
 });
@@ -14,10 +16,12 @@ $(window).scroll(function () {
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
+                timeout: timeout,
                 data: JSON.stringify({'email':email}),
-                success: function () {
-                    alert('success')
-                },
+                success: function (result) {
+                    // alert(atob(result))
+                    alert(result.message);
+                }
             })
         })
 
@@ -28,12 +32,16 @@ $(window).scroll(function () {
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
+                timeout: timeout,
                 data: JSON.stringify({'email':email}),
-                success: function () {
-                    alert('success')
-                },
+                success: function (result,status,xhr) {
+                    // alert(atob(result))
+                    alert(result.message);
+                }
+                // error: function (jqXhr, textStatus, errorMessage) {
+                //     console.log('Error: ' + errorMessage);
+                // }
             })
         })
-
     })
 })(jQuery);

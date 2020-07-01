@@ -15,3 +15,7 @@ type UserBody struct {
 type Email struct {
 	Email string `json:"email" bson:"email"`
 }
+
+type Message struct {
+	Message string `json:"message"`
+}

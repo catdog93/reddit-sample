@@ -25,7 +25,7 @@ func CheckIsAuthorised(context *gin.Context) {
 	if err != nil {
 		return
 	}
-	_, ok := service.Tokens[token]
+	_, ok := service.TokensCache[token]
 	if ok {
 		context.Redirect(http.StatusMovedPermanently, MblogURI+HomeURI)
 		context.Abort()
@@ -66,7 +66,7 @@ func SigninPost(context *gin.Context) {
 	http.SetCookie(context.Writer, &http.Cookie{
 		Name:     tokenString,
 		Value:    token,
-		MaxAge:   600,
+		MaxAge:   service.ExpirationTime * 60,
 		Path:     "/",
 		Domain:   "localhost",
 		SameSite: http.SameSiteStrictMode,

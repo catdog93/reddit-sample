@@ -2,6 +2,7 @@
 package service
 
 import (
+	"errors"
 	ai "github.com/night-codes/mgo-ai"
 	mgo "gopkg.in/mgo.v2"
 	"testTaskBitmediaLabs/entity"
@@ -29,28 +30,28 @@ func FindUserByEmail(email string) (*entity.User, error) {
 	return &result, err
 }
 
-func Subscribe(currentUser *entity.User, email string) error {
-	userSubscription, err := FindUserByEmail(email)
+func Subscribe(subscriberUser *entity.User, emailOfPublisher string) (bool, error) {
+	userSubscription, err := FindUserByEmail(emailOfPublisher)
 	if err != nil {
-		return err
+		return false, err
 	}
-	isSubscribed, _ := CheckSubscription(currentUser.UsersIDs, userSubscription.ID)
+	isSubscribed, _ := CheckSubscription(subscriberUser.UsersIDs, userSubscription.ID)
 	if isSubscribed {
-		return nil
+		return true, nil
 	}
-	if currentUser.UsersIDs == nil {
-		currentUser.UsersIDs = []uint64{userSubscription.ID}
+	if subscriberUser.UsersIDs == nil {
+		subscriberUser.UsersIDs = []uint64{userSubscription.ID}
 	} else {
-		currentUser.UsersIDs = append(currentUser.UsersIDs, userSubscription.ID)
+		subscriberUser.UsersIDs = append(subscriberUser.UsersIDs, userSubscription.ID)
 	}
 
 	user := Obj{
-		"email":    currentUser.Email,
-		"password": currentUser.Password,
-		"usersIDs": currentUser.UsersIDs,
+		"email":    subscriberUser.Email,
+		"password": subscriberUser.Password,
+		"usersIDs": subscriberUser.UsersIDs,
 	}
-	err = UsersCollection.UpdateId(currentUser.ID, user)
-	return err
+	err = UsersCollection.UpdateId(subscriberUser.ID, user)
+	return false, err
 }
 
 // also returns index
@@ -65,29 +66,29 @@ func CheckSubscription(userIDs []uint64, userID uint64) (bool, int) {
 	return false, -1
 }
 
-func Unfollow(currentUser *entity.User, email string) error {
-	if currentUser.Email != email {
-		userSubscription, err := FindUserByEmail(email)
+func Unfollow(subscriberUser *entity.User, emailOfPublisher string) (bool, error) {
+	if subscriberUser.Email != emailOfPublisher {
+		userSubscription, err := FindUserByEmail(emailOfPublisher)
 		if err != nil {
-			return err
+			return false, err
 		}
-		isSubscribed, index := CheckSubscription(currentUser.UsersIDs, userSubscription.ID)
+		isSubscribed, index := CheckSubscription(subscriberUser.UsersIDs, userSubscription.ID)
 		if !isSubscribed {
-			return nil
+			return true, nil
 		}
 
 		// quick removing one following from slice
-		currentUser.UsersIDs[index] = currentUser.UsersIDs[len(currentUser.UsersIDs)-1]
-		currentUser.UsersIDs[len(currentUser.UsersIDs)-1] = 0
-		currentUser.UsersIDs = currentUser.UsersIDs[:len(currentUser.UsersIDs)-1]
+		subscriberUser.UsersIDs[index] = subscriberUser.UsersIDs[len(subscriberUser.UsersIDs)-1]
+		//subscriberUser.UsersIDs[len(subscriberUser.UsersIDs)-1] = 0
+		subscriberUser.UsersIDs = subscriberUser.UsersIDs[:len(subscriberUser.UsersIDs)-1]
 
 		user := Obj{
-			"email":    currentUser.Email,
-			"password": currentUser.Password,
-			"usersIDs": currentUser.UsersIDs,
+			"email":    subscriberUser.Email,
+			"password": subscriberUser.Password,
+			"usersIDs": subscriberUser.UsersIDs,
 		}
-		err = UsersCollection.UpdateId(currentUser.ID, user)
-		return err
+		err = UsersCollection.UpdateId(subscriberUser.ID, user)
+		return false, err
 	}
-	return nil
+	return false, errors.New("can't unsubscribed yourself")
 }

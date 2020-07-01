@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"testTaskBitmediaLabs/entity"
@@ -17,7 +18,7 @@ const (
 func TokenAuth(context *gin.Context) {
 	token, err := context.Cookie(tokenString)
 	if err == nil {
-		_, ok := service.Tokens[token]
+		_, ok := service.TokensCache[token]
 		if ok {
 			return
 		}
@@ -41,7 +42,7 @@ func GetSubscriptionsPage(context *gin.Context) {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, _ := service.Tokens[token]
+	user, _ := service.TokensCache[token]
 	userFromDB, err := service.FindUserByEmail(user.Email)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())
@@ -56,8 +57,8 @@ func GetSubscriptionsPage(context *gin.Context) {
 }
 
 func SubscribeUser(context *gin.Context) {
-	email := entity.Email{}
-	err := context.BindJSON(&email)
+	emailOfPublisher := entity.Email{}
+	err := context.BindJSON(&emailOfPublisher)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
@@ -67,24 +68,28 @@ func SubscribeUser(context *gin.Context) {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, ok := service.Tokens[token]
+	subscriberUser, ok := service.TokensCache[token]
 	if ok {
-		userFromDB, err := service.FindUserByEmail(user.Email)
+		subscriber, err := service.FindUserByEmail(subscriberUser.Email)
 		if err != nil {
 			context.String(http.StatusInternalServerError, err.Error())
 			return
 		}
-		err = service.Subscribe(userFromDB, email.Email)
+		wasAlreadySubscribed, err := service.Subscribe(subscriber, emailOfPublisher.Email)
 		if err != nil {
 			context.String(http.StatusInternalServerError, err.Error())
 			return
+		}
+		if !wasAlreadySubscribed {
+			//context.String(http.StatusOK,"Successfully subscribed %s", emailOfPublisher.Email)
+			context.JSON(http.StatusOK, entity.Message{Message: fmt.Sprintf("Successfully subscribed %s", emailOfPublisher.Email)})
 		}
 	}
 }
 
 func UnfollowUser(context *gin.Context) {
-	email := entity.Email{}
-	err := context.BindJSON(&email)
+	emailOfPublisher := entity.Email{}
+	err := context.BindJSON(&emailOfPublisher)
 	if err != nil {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
@@ -94,17 +99,21 @@ func UnfollowUser(context *gin.Context) {
 		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, ok := service.Tokens[token]
+	subscriberUser, ok := service.TokensCache[token]
 	if ok {
-		userFromDB, err := service.FindUserByEmail(user.Email)
+		subscriber, err := service.FindUserByEmail(subscriberUser.Email)
 		if err != nil {
 			context.String(http.StatusInternalServerError, err.Error())
 			return
 		}
-		err = service.Unfollow(userFromDB, email.Email)
+		wasNotFollowed, err := service.Unfollow(subscriber, emailOfPublisher.Email)
 		if err != nil {
 			context.String(http.StatusInternalServerError, err.Error())
 			return
+		}
+		if !wasNotFollowed {
+			//context.String(http.StatusOK,"Successfully unfollowed from %s", emailOfPublisher.Email)
+			context.JSON(http.StatusOK, entity.Message{Message: fmt.Sprintf("Successfully unfollowed from %s", emailOfPublisher.Email)})
 		}
 	}
 }
