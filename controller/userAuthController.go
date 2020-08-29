@@ -8,9 +8,11 @@ import (
 )
 
 const (
-	Users     = "/users"
-	SigninURI = "/signin"
-	SignupURI = "/signup"
+	Users       = "/users"
+	SigninURI   = "/signin"
+	SignupURI   = "/signup"
+	OAuthURI    = "/oauth"
+	CallBackURI = "/callback"
 
 	incorrectEmailOrPassword = "Incorrect email or password"
 	suchEmailAlreadyExists   = "Such email already exists"
@@ -22,11 +24,20 @@ const (
 // redirect user to home page if he have already authorized
 func CheckIsAuthorised(context *gin.Context) {
 	token, err := context.Cookie(tokenString)
+	//if err != nil {
+	//	return
+	//}
+	_, ok := service.TokensCache[token]
+	if ok {
+		context.Redirect(http.StatusMovedPermanently, MblogURI+HomeURI)
+		context.Abort()
+	}
+
+	token, err = context.Cookie(googleTokenString)
 	if err != nil {
 		return
 	}
-	_, ok := service.TokensCache[token]
-	if ok {
+	if len(token) > 0 {
 		context.Redirect(http.StatusMovedPermanently, MblogURI+HomeURI)
 		context.Abort()
 	}
@@ -77,7 +88,7 @@ func SigninPost(context *gin.Context) {
 }
 
 func GetSigninForm(context *gin.Context) {
-	context.HTML(http.StatusOK, "signin.html", nil)
+	context.HTML(http.StatusOK, "signin_v0.html", nil)
 }
 
 func GetSignupForm(context *gin.Context) {

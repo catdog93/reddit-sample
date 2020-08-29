@@ -16,7 +16,7 @@ const (
 var TokensCache = map[string]entity.User{}
 
 func CreateToken(user *entity.User) string {
-	jwtToken, err := generateToken()
+	jwtToken, err := GenerateToken()
 	if err != nil {
 		return err.Error()
 	}
@@ -24,7 +24,7 @@ func CreateToken(user *entity.User) string {
 	return jwtToken
 }
 
-func generateToken() (token string, err error) {
+func GenerateToken() (token string, err error) {
 	atClaims := jwt.MapClaims{}
 	atClaims[authorized] = true
 	atClaims[expired] = time.Now().Add(time.Minute * ExpirationTime).Unix()

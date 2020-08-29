@@ -11,10 +11,11 @@ import (
 const (
 	CreatePostURI = "/postCreation"
 
-	text        = "inputText"
-	image       = "inputImage"
-	video       = "inputVideo"
-	tokenString = "token"
+	text              = "inputText"
+	image             = "inputImage"
+	video             = "inputVideo"
+	tokenString       = "token"
+	googleTokenString = "googleToken"
 )
 
 func CreatePost(context *gin.Context) {

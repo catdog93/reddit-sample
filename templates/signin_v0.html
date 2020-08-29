@@ -51,30 +51,7 @@
         <h5 id="incorrectCredentials">{{.}}</h5>
         <a class="btn btn-link" href="signup" role="button">Haven't signed up ?</a>
         <button class="btn btn-lg btn-success btn-block" id="btn" type="submit">Sign in</button>
-        <div id="my-signin2"></div>
-        <script>
-            function onSuccess(googleUser) {
-                console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-            }
-
-            function onFailure(error) {
-                console.log(error);
-            }
-
-            function renderButton() {
-                gapi.signin2.render('my-signin2', {
-                    'scope': 'profile email',
-                    'width': 240,
-                    'height': 50,
-                    'longtitle': true,
-                    'theme': 'dark',
-                    'onsuccess': onSuccess,
-                    'onfailure': onFailure
-                });
-            }
-        </script>
-
-        <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+        <a id="my-signin2" href="/users/oauth">google ouath2</a>
         <p class="mt-5 mb-3 text-muted">© 2020</p>
     </form>
 </div>
